@@ -106,7 +106,7 @@ def create_pkcs12(cert, chain, p12_tmp, key, alias, passphrase, legacy: bool = F
 
 
 class OpenSSLExportPlugin(ExportPlugin):
-    title = "OpenSSL"
+    title = "OpenSSL_IIS"
     slug = "openssl-export"
     description = "Is a loose interface to openssl and support various formats"
     version = openssl.VERSION
@@ -119,7 +119,7 @@ class OpenSSLExportPlugin(ExportPlugin):
             "name": "type",
             "type": "select",
             "required": True,
-            "available": ["PKCS12 (.p12)", "legacy PKCS12 (.p12)"],
+            "available": ["PKCS12 (.pfx)", "legacy PKCS12 (.p12)"],
             "helpMessage": "Choose the format you wish to export",
         },
         {
@@ -160,12 +160,11 @@ class OpenSSLExportPlugin(ExportPlugin):
         type = self.get_option("type", options)
 
         with mktemppath() as output_tmp:
-            if type == "PKCS12 (.p12)":
+            if type == "PKCS12 (.pfx)":
                 if not key:
                     raise Exception(f"Private Key required by {type}")
-
                 create_pkcs12(body, chain, output_tmp, key, alias, passphrase)
-                extension = "p12"
+                extension = "pfx"
             elif type == "legacy PKCS12 (.p12)":
                 if not key:
                     raise Exception(f"Private Key required by {type}")
